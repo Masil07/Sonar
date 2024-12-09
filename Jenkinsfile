@@ -52,3 +52,4 @@ pipeline {
         echo 'This runs regardless of the result.'
     }
 }
+}
