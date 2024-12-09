@@ -48,5 +48,7 @@ pipeline {
         failure {
             echo 'Pipeline failed'
         }
+        always {
+        echo 'This runs regardless of the result.'
     }
 }
