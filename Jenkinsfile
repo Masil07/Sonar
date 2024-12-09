@@ -1,5 +1,5 @@
-stage('Verify PATH') {
-    steps {
+node {
+    stage('Verify PATH') {
         bat 'echo %PATH%'
     }
 }
