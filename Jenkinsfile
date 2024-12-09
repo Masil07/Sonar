@@ -1,33 +1,55 @@
 pipeline {
     agent any
+    environment {
+        PYTHON_PATH = 'C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python313;C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python313\\Scripts'
+    }
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/Masil07/Sonar.git'
+                checkout scm
             }
         }
         stage('Build') {
             steps {
-                bat 'pip install -r requirements.txt'
+                // Set the PATH and install dependencies using pip
+                bat '''
+                set PATH=%PYTHON_PATH%;%PATH%
+                pip install -r requirements.txt
+                '''
             }
         }
         stage('SonarQube Analysis') {
+            environment {
+                SONAR_TOKEN = credentials('sonarqube-token') // Accessing the SonarQube token stored in Jenkins credentials
+            }
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat '''
-                    sonar-scanner -Dsonar.projectKey=github_trial1
-                                  -Dsonar.projectName=Trial1
-                                  -Dsonar.sources=.
-                                  -Dsonar.host.url=http://localhost:9000
-                                  -Dsonar.token=your-sonar-token
-                    '''
-                }
+                bat '''
+                set PATH=%PYTHON_PATH%;%PATH%
+                sonar-scanner -Dsonar.projectKey=github_trial1 \
+                              -Dsonar.projectName=Trial1 \
+                              -Dsonar.sources=. \
+                              -Dsonar.host.url=http://localhost:9000 \
+                              -Dsonar.token=%SONAR_TOKEN%
+                '''
             }
         }
         stage('Quality Gate') {
             steps {
-                waitForQualityGate abortPipeline: true
+                timeout(time: 2, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                } 
             }
         }
     }
+    post {
+        success {
+            echo 'Pipeline completed successfully'
+        }
+        failure {
+            echo 'Pipeline failed'
+        }
+        always {
+            echo 'This runs regardless of the result.'
+    }
+}
 }
