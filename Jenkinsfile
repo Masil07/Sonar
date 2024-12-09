@@ -25,11 +25,11 @@ pipeline {
             steps {
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
-                sonar-scanner.bat -Dsonar.projectKey=my-project-key ^
-                                  -Dsonar.projectName=MyProjectName ^
-                                  -Dsonar.sources=. ^
-                                  -Dsonar.host.url=http://localhost:9000 ^
-                                  -Dsonar.token=%SONAR_TOKEN%
+                sonar-scanner -Dsonar.projectKey=github_trial1 \
+                              -Dsonar.projectName=Trial1 \
+                              -Dsonar.sources=. \
+                              -Dsonar.host.url=http://localhost:9000 \
+                              -Dsonar.token=%SONAR_TOKEN%
                 '''
             }
         }
@@ -50,6 +50,6 @@ pipeline {
         }
         always {
             echo 'This runs regardless of the result.'
-        }
     }
+}
 }
