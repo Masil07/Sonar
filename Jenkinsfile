@@ -7,6 +7,10 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                script {
+                    echo 'Checked out code from the repository.'
+                    echo "Current build result after checkout: ${currentBuild.result}"
+                }
             }
         }
         stage('Build') {
@@ -16,6 +20,10 @@ pipeline {
                 set PATH=%PYTHON_PATH%;%PATH%
                 pip install -r requirements.txt
                 '''
+                script {
+                    echo 'Build stage completed.'
+                    echo "Current build result after build: ${currentBuild.result}"
+                }
             }
         }
         stage('SonarQube Analysis') {
@@ -31,25 +39,45 @@ pipeline {
                               -Dsonar.host.url=http://localhost:9000 \
                               -Dsonar.token=%SONAR_TOKEN%
                 '''
+                script {
+                    echo 'SonarQube analysis stage completed.'
+                    echo "Current build result after SonarQube analysis: ${currentBuild.result}"
+                }
             }
         }
         stage('Quality Gate') {
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
+                    script {
+                        echo "Waiting for SonarQube quality gate to complete..."
+                    }
                     waitForQualityGate abortPipeline: true
-                } 
+                }
+                script {
+                    echo 'Quality gate check completed.'
+                    echo "Current build result after quality gate: ${currentBuild.result}"
+                }
             }
         }
     }
     post {
         success {
             echo 'Pipeline completed successfully'
+            script {
+                echo "Final build result: ${currentBuild.result}"
+            }
         }
         failure {
             echo 'Pipeline failed'
+            script {
+                echo "Final build result: ${currentBuild.result}"
+            }
         }
         always {
             echo 'This runs regardless of the result.'
+            script {
+                echo "Pipeline result at the end: ${currentBuild.result}"
+            }
+        }
     }
-}
 }
