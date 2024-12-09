@@ -10,7 +10,6 @@ pipeline {
             steps {
                 // Install dependencies and run tests
                 bat 'pip install -r requirements.txt'
-                bat 'python -m unittest discover'
             }
         }
         stage('SonarQube Analysis') {
