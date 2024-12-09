@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        PYTHON_PATH = 'C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python313;C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python313\\Scripts'
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -8,8 +11,11 @@ pipeline {
         }
         stage('Build') {
             steps {
-                // Install dependencies and run tests using pip (assuming it's in PATH)
-                bat 'pip install -r requirements.txt'
+                // Set the PATH and install dependencies using pip
+                bat '''
+                set PATH=%PYTHON_PATH%;%PATH%
+                pip install -r requirements.txt
+                '''
             }
         }
         stage('SonarQube Analysis') {
@@ -18,6 +24,7 @@ pipeline {
             }
             steps {
                 bat '''
+                set PATH=%PYTHON_PATH%;%PATH%
                 sonar-scanner -Dsonar.projectKey=github_trial1 \
                               -Dsonar.projectName=Trial1 \
                               -Dsonar.sources=. \
