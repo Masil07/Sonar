@@ -36,7 +36,6 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 script {
-                    sleep 50
                     def qg = waitForQualityGate()
                     if (qg.status != 'OK') {
                         error "Pipeline aborted due to quality gate failure: ${qg.status}"
