@@ -51,7 +51,14 @@ pipeline {
                     script {
                         echo "Waiting for SonarQube quality gate to complete..."
                     }
-                    waitForQualityGate abortPipeline: true
+                    def qualityGateResult = waitForQualityGate()
+                    if (qualityGateResult.status == 'FAILED') {
+                        currentBuild.result = 'FAILURE'
+                        echo 'Quality gate failed. Pipeline will stop here.'
+                        error('Quality gate failed.')
+                    } else {
+                        echo 'Quality gate passed.'
+                    }
                 }
                 script {
                     echo 'Quality gate check completed.'
