@@ -8,8 +8,8 @@ pipeline {
         }
         stage('Build') {
             steps {
-                // Install dependencies and run tests using the full path to pip
-                bat 'C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pip.exe install -r requirements.txt'
+                // Install dependencies and run tests using pip (assuming it's in PATH)
+                bat 'pip install -r requirements.txt'
             }
         }
         stage('SonarQube Analysis') {
