@@ -3,28 +3,37 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Pull code from your GitHub repository
-                git branch: 'main', url: 'https://github.com/Masil07/Sonar.git'
+                checkout scm
             }
         }
         stage('Build') {
             steps {
-                // Use Maven to build your project
-                sh 'mvn clean install'
+                // Install dependencies and run tests
+                bat 'pip install -r requirements.txt'
+                bat 'python -m unittest discover'
             }
         }
         stage('SonarQube Analysis') {
+            environment {
+                SONAR_TOKEN = credentials('sonarqube-token')
+            }
             steps {
-                withSonarQubeEnv('sonarqube') { 
-                    // Run SonarQube analysis
-                    sh 'mvn sonar:sonar'
-                }
+                bat '''
+                sonar-scanner -Dsonar.projectKey=github_trial1 \
+                              -Dsonar.projectName=Trial1 \
+                              -Dsonar.sources=. \
+                              -Dsonar.host.url=http://localhost:9000 \
+                              -Dsonar.login=%SONAR_TOKEN%
+                '''
             }
         }
         stage('Quality Gate') {
             steps {
-                timeout(time: 1, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                script {
+                    def qg = waitForQualityGate()
+                    if (qg.status != 'OK') {
+                        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                    }
                 }
             }
         }
