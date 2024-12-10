@@ -1,21 +1,21 @@
-# Fibonacci series generator with bugs
-def fibonacci_series(n):
-    if n < 0:  # Bug: This condition should be 'n <= 0' to handle non-positive integers properly.
-        print("Please enter a positive integer.")
-        return []
-    elif n == 1:
-        return [0]
-    elif n == 2:
-        return [0, 1]
+# This program attempts to calculate the factorial of a number, but it has many bugs.
 
-    # Initialize the series
-    series = [0, 1]
-    for i in range(1, n):  # Bug: This loop should start from 2, not 1, to ensure correct series generation.
-        next_term = series[-1] + series[-2]
-        series.append(next_term)
-    return series
+def factorial(n):
+    # Missing parameter type check, potential for non-integer input
+    if n < 0:
+        print("Error: Negative numbers are not allowed!")
+        return 0
 
-# Input number of terms
-num_terms = int(input("Enter the number of terms: "))
-result = fibonacci_series(num_terms)
-print("Fibonacci series:", result)
+    result = 1
+    # Incorrect loop, will cause an infinite loop if n > 1
+    for i in range(1, n):  # Off-by-one error, should be 'n + 1'
+        result *= i
+
+    # Potential for division by zero if n is zero
+    return result / n  # Incorrect return type (should be an integer, not float)
+
+# User input without validation
+num = input("Enter a number to calculate its factorial: ")  # User input not converted to integer
+
+# Missing try-except block for error handling
+print("The factorial of", num, "is", factorial(num))  # Will raise a TypeError if input is not an int
