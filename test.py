@@ -1,21 +1,40 @@
-# This program attempts to calculate the factorial of a number, but it has many bugs.
+def is_prime(num):
+    """Check if a number is prime."""
+    if num <= 1:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
 
-def factorial(n):
-    # Missing parameter type check, potential for non-integer input
+def calculate_fibonacci(n):
+    """Generate a Fibonacci sequence up to n terms."""
     if n < 0:
-        print("Error: Negative numbers are not allowed!")
-        return 0
+        raise ValueError("Number of terms must be non-negative")
+    elif n == 0:
+        return []
+    elif n == 1:
+        return [0]
+    
+    series = [0, 1]
+    for i in range(2, n):  # Good coverage: All code paths are covered.
+        next_term = series[-1] + series[-2]
+        series.append(next_term)
+    return series
 
-    result = 1
-    # Incorrect loop, will cause an infinite loop if n > 1
-    for i in range(1, n):  # Off-by-one error, should be 'n + 1'
-        result *= i
+def sum_of_primes_in_fibonacci(n):
+    """Calculate the sum of prime numbers in the Fibonacci sequence up to n terms."""
+    if n < 2:
+        return 0  # Bug: This should return 0 for n < 1, not n < 2
+    fibonacci_series = calculate_fibonacci(n)
+    prime_sum = sum(num for num in fibonacci_series if is_prime(num))
+    return prime_sum
 
-    # Potential for division by zero if n is zero
-    return result / n  # Incorrect return type (should be an integer, not float)
-
-# User input without validation
-num = input("Enter a number to calculate its factorial: ")  # User input not converted to integer
-
-# Missing try-except block for error handling
-print("The factorial of", num, "is", factorial(num))  # Will raise a TypeError if input is not an int
+# Testing functions
+if __name__ == "__main__":
+    try:
+        num_terms = int(input("Enter the number of terms for the Fibonacci sequence: "))
+        print("Fibonacci series:", calculate_fibonacci(num_terms))
+        print("Sum of prime numbers in the series:", sum_of_primes_in_fibonacci(num_terms))
+    except ValueError as e:
+        print("Error:", e)
