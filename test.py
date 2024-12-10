@@ -24,11 +24,15 @@ def calculate_fibonacci(n):
 
 def sum_of_primes_in_fibonacci(n):
     """Calculate the sum of prime numbers in the Fibonacci sequence up to n terms."""
-    if n < 1:  # Corrected bug: Changed the condition from n < 2 to n < 1
+    if n < 1:
         return 0
     fibonacci_series = calculate_fibonacci(n)
     prime_sum = sum(num for num in fibonacci_series if is_prime(num))
     return prime_sum
+
+# Bug: Unused variable
+def unused_function():
+    unused_variable = "This is an unused variable"  # SonarQube will flag this
 
 # Testing functions
 if __name__ == "__main__":
