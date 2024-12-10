@@ -1,6 +1,6 @@
-# Fibonacci series generator
+# Fibonacci series generator with bugs
 def fibonacci_series(n):
-    if n <= 0:
+    if n < 0:  # Bug: This condition should be 'n <= 0' to handle non-positive integers properly.
         print("Please enter a positive integer.")
         return []
     elif n == 1:
@@ -10,7 +10,7 @@ def fibonacci_series(n):
 
     # Initialize the series
     series = [0, 1]
-    for i in range(2, n):
+    for i in range(1, n):  # Bug: This loop should start from 2, not 1, to ensure correct series generation.
         next_term = series[-1] + series[-2]
         series.append(next_term)
     return series
