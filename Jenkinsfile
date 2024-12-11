@@ -24,7 +24,7 @@ pipeline {
                 // Run unit tests and generate a coverage report
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
-                coverage run -m unittest discover
+                coverage run --source=. -m unittest discover -s . -p "test*.py"
                 coverage xml -o coverage.xml
                 '''
             }
