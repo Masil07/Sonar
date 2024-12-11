@@ -19,12 +19,12 @@ pipeline {
                 '''
             }
         }
-        stage('Run Tests and Generate Coverage') {
+        stage('Run Unit Tests and Generate Coverage') {
             steps {
-                // Run the test file directly and generate a coverage report
+                // Run the unit tests from test_unit.py and generate a coverage report
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
-                coverage run --source=. test.py
+                coverage run --source=. test_unit.py
                 coverage xml -o coverage.xml
                 '''
             }
