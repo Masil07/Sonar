@@ -19,6 +19,15 @@ pipeline {
                 '''
             }
         }
+        stage('Verify Coverage Installation') {
+            steps {
+                // Verify that coverage is installed
+                bat '''
+                set PATH=%PYTHON_PATH%;%PATH%
+                pip show coverage
+                '''
+            }
+        }
         stage('Run Unit Tests and Generate Coverage') {
             steps {
                 // Run the unit tests from test_unit.py and generate a coverage report
