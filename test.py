@@ -17,7 +17,7 @@ def calculate_fibonacci(n):
         return [0]
     
     series = [0, 1]
-    for i in range(2, n):  # Good coverage: All code paths are covered.
+    for i in range(2, n):
         next_term = series[-1] + series[-2]
         series.append(next_term)
     return series
@@ -30,15 +30,28 @@ def sum_of_primes_in_fibonacci(n):
     prime_sum = sum(num for num in fibonacci_series if is_prime(num))
     return prime_sum
 
-# Bug: Unused variable
-def unused_function():
-    unused_variable = "This is an unused variable"  # SonarQube will flag this
-
-# Testing functions
+# Unit tests for the above functions
 if __name__ == "__main__":
-    try:
-        num_terms = int(input("Enter the number of terms for the Fibonacci sequence: "))
-        print("Fibonacci series:", calculate_fibonacci(num_terms))
-        print("Sum of prime numbers in the series:", sum_of_primes_in_fibonacci(num_terms))
-    except ValueError as e:
-        print("Error:", e)
+    import unittest
+
+    class TestFunctions(unittest.TestCase):
+        def test_is_prime(self):
+            self.assertTrue(is_prime(2))
+            self.assertTrue(is_prime(3))
+            self.assertFalse(is_prime(4))
+            self.assertFalse(is_prime(1))
+            self.assertTrue(is_prime(17))
+
+        def test_calculate_fibonacci(self):
+            self.assertEqual(calculate_fibonacci(0), [])
+            self.assertEqual(calculate_fibonacci(1), [0])
+            self.assertEqual(calculate_fibonacci(2), [0, 1])
+            self.assertEqual(calculate_fibonacci(5), [0, 1, 1, 2, 3])
+
+        def test_sum_of_primes_in_fibonacci(self):
+            self.assertEqual(sum_of_primes_in_fibonacci(0), 0)
+            self.assertEqual(sum_of_primes_in_fibonacci(1), 0)
+            self.assertEqual(sum_of_primes_in_fibonacci(2), 0)
+            self.assertEqual(sum_of_primes_in_fibonacci(5), 5)  # Only 2 and 3 are primes in [0, 1, 1, 2, 3]
+
+    unittest.main()
