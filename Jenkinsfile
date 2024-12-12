@@ -10,18 +10,9 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Install Dependencies') {
-            steps {
-                // Install dependencies using pip
-                bat '''
-                set PATH=%PYTHON_PATH%;%PATH%
-                pip install -r requirements.txt
-                '''
-            }
-        }
         stage('Verify Coverage Installation') {
             steps {
-                // Verify that coverage is installed
+                // Verify that coverage is installed locally
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
                 pip show coverage
@@ -46,11 +37,11 @@ pipeline {
                 // Perform SonarQube analysis
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
-                sonar-scanner -Dsonar.projectKey=github_trial1 \
-                              -Dsonar.projectName=Trial1 \
-                              -Dsonar.sources=. \
-                              -Dsonar.python.coverage.reportPaths=coverage.xml \
-                              -Dsonar.host.url=http://localhost:9000 \
+                sonar-scanner -Dsonar.projectKey=github_trial1 ^
+                              -Dsonar.projectName=Trial1 ^
+                              -Dsonar.sources=. ^
+                              -Dsonar.python.coverage.reportPaths=coverage.xml ^
+                              -Dsonar.host.url=http://localhost:9000 ^
                               -Dsonar.token=%SONAR_TOKEN%
                 '''
             }
