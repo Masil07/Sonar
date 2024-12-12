@@ -6,14 +6,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Pull the source code from the repository
                 checkout scm
             }
         }
 
         stage('Verify Coverage Installation') {
             steps {
-                // Verify that coverage is installed locally
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
                 pip show coverage
@@ -21,36 +19,8 @@ pipeline {
             }
         }
 
-        stage('Verify Coverage Run Command Execution') {
-            steps {
-                // Check if coverage run command works and show if there are errors
-                bat '''
-                set PATH=%PYTHON_PATH%;%PATH%
-                echo "Running coverage run command to check execution..."
-                coverage run --source=. test_unit.py
-                if %ERRORLEVEL% neq 0 (
-                    echo "Error: Coverage run command failed!"
-                    exit /b %ERRORLEVEL%
-                ) else (
-                    echo "Coverage run command executed successfully"
-                )
-                '''
-            }
-        }
-
-        stage('Ensure Correct Working Directory') {
-            steps {
-                // Print current working directory to ensure correct context for coverage
-                bat '''
-                set PATH=%PYTHON_PATH%;%PATH%
-                echo "Current working directory: %cd%"
-                '''
-            }
-        }
-
         stage('Run Unit Tests and Generate Coverage') {
             steps {
-                // Run the unit tests from test_unit.py and generate a coverage report
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
                 echo "Running tests with coverage..."
@@ -66,12 +36,21 @@ pipeline {
             }
         }
 
+        stage('Ensure Correct Working Directory') {
+            steps {
+                bat '''
+                set PATH=%PYTHON_PATH%;%PATH%
+                echo "Current working directory: %cd%"
+                dir
+                '''
+            }
+        }
+
         stage('SonarQube Analysis') {
             environment {
                 SONAR_TOKEN = credentials('sonarqube-token') // Accessing the SonarQube token stored in Jenkins credentials
             }
             steps {
-                // Perform SonarQube analysis
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
                 sonar-scanner -Dsonar.projectKey=github_trial1 ^
