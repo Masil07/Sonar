@@ -10,11 +10,16 @@ pipeline {
             }
         }
 
-        stage('Verify Coverage Installation') {
+        stage('Install Dependencies') {
             steps {
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
-                pip show coverage || pip install coverage
+                if exist requirements.txt (
+                    echo "Installing dependencies from requirements.txt..."
+                    pip install -r requirements.txt
+                ) else (
+                    echo "No requirements.txt found. Skipping dependency installation."
+                )
                 '''
             }
         }
