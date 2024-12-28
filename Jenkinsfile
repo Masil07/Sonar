@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PYTHON_PATH = 'C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python313;C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python313\\Scripts'
+        PYTHON_PATH = 'C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python312;C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python312\\Scripts'
     }
     stages {
         stage('Checkout') {
@@ -14,7 +14,7 @@ pipeline {
             steps {
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
-                pip show coverage
+                pip show coverage || pip install coverage
                 '''
             }
         }
@@ -23,8 +23,7 @@ pipeline {
             steps {
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
-                echo "Running tests with coverage..."
-                coverage run --source=. test_unit.py
+                coverage run --source=. -m unittest discover
                 coverage xml -o coverage.xml
                 if exist coverage.xml (
                     echo "Coverage report generated successfully."
@@ -36,19 +35,9 @@ pipeline {
             }
         }
 
-        stage('Ensure Correct Working Directory') {
-            steps {
-                bat '''
-                set PATH=%PYTHON_PATH%;%PATH%
-                echo "Current working directory: %cd%"
-                dir
-                '''
-            }
-        }
-
         stage('SonarQube Analysis') {
             environment {
-                SONAR_TOKEN = credentials('sonarqube-token') // Accessing the SonarQube token stored in Jenkins credentials
+                SONAR_TOKEN = credentials('sonarqube-token')
             }
             steps {
                 bat '''
@@ -57,10 +46,9 @@ pipeline {
                               -Dsonar.projectName=Trial1 ^
                               -Dsonar.sources=. ^
                               -Dsonar.python.coverage.reportPaths=coverage.xml ^
-                              -Dsonar.cpd.exclusions=**/test/** ^  // Exclude test files from duplication detection
+                              -Dsonar.cpd.exclusions=**/test/** ^
                               -Dsonar.host.url=http://localhost:9000 ^
-                              -Dsonar.token=%SONAR_TOKEN% ^ 
-                              -Dsonar.cpd.duplication=true  // Enable duplication detection
+                              -Dsonar.login=%SONAR_TOKEN%
                 '''
             }
         }
