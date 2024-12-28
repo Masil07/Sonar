@@ -28,6 +28,9 @@ pipeline {
             steps {
                 bat '''
                 set PATH=%PYTHON_PATH%;%PATH%
+                echo "Python version: %PYTHON_PATH%"
+                echo "Installed packages:"
+                pip list
                 coverage run --source=. -m unittest discover
                 coverage xml -o coverage.xml
                 if exist coverage.xml (
