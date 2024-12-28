@@ -57,8 +57,10 @@ pipeline {
                               -Dsonar.projectName=Trial1 ^
                               -Dsonar.sources=. ^
                               -Dsonar.python.coverage.reportPaths=coverage.xml ^
+                              -Dsonar.cpd.exclusions=**/test/** ^  // Exclude test files from duplication detection
                               -Dsonar.host.url=http://localhost:9000 ^
-                              -Dsonar.token=%SONAR_TOKEN%
+                              -Dsonar.token=%SONAR_TOKEN% ^ 
+                              -Dsonar.cpd.duplication=true  // Enable duplication detection
                 '''
             }
         }
